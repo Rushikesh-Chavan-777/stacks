@@ -32,7 +32,6 @@ class MinStack {
 }
 
 public class master1 {
-
     // trying to solve the famous balanced paranthesis problem using stacks
     public static boolean balancedparanthesis(String s) {
         Stack<Character> stack = new Stack<>();
@@ -97,6 +96,27 @@ public class master1 {
         }
         return ans;
     }
+
+    // now, working on the successor problem to the earlier, this is the next
+    // smaller lelement
+    public static int[] prevSmallerElement(int[] arr) {
+        int[] ans = new int[arr.length];
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            while (!stack.isEmpty() && stack.peek() >= arr[i])
+                stack.pop();
+
+            if (stack.isEmpty())
+                ans[i] = -1;
+            else
+                ans[i] = stack.peek();
+            stack.push(arr[i]);
+        }
+        return ans;
+    }
+
+    //
 
     public static void main(String[] args) {
     }

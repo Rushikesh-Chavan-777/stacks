@@ -1,6 +1,42 @@
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Stack;
 
-//solving the famous minstack problem here 
+//the famous stock spanner class
+class Pair {
+    int first;
+    int second;
+
+    Pair(int data1, int data2) {
+        this.first = data1;
+        this.second = data2;
+    }
+}
+
+class StockSpan {
+    Stack<Pair> stack = new Stack<>();
+    int idx = -1;
+
+    public void StockSpanner() {
+        idx = -1;
+        while (!stack.isEmpty()) {
+            stack.pop();
+        }
+    }
+
+    public int next(int val) {
+        while (!stack.isEmpty() && stack.peek().second <= val) {
+            stack.pop();
+        }
+        idx++;
+        int last = stack.isEmpty() ? -1 : stack.peek().second;
+        stack.push(new Pair(idx, val));
+        return idx - last;
+    }
+}
+
+// solving the famous minstack problem here
 class MinStack {
     Stack<Integer> stack = new Stack<>();
     int min = Integer.MAX_VALUE;
@@ -116,7 +152,126 @@ public class master1 {
         return ans;
     }
 
-    //
+    public static Stack<Integer> asteroid_collision(int[] arr) {
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] > 0) {
+                stack.push(arr[i]);
+            } else {
+                while (!stack.isEmpty() && stack.peek() > 0 && Math.abs(arr[i]) > stack.peek()) {
+                    stack.pop();
+                }
+                if (!stack.isEmpty() && Math.abs(arr[i]) == stack.peek()) {
+                    stack.pop();
+                } else if (stack.isEmpty()) {
+                    stack.push(arr[i]);
+                }
+            }
+        }
+        return stack;
+    }
+
+    // now, lets solve the problem of the largest rectangle in ahistorgram
+    // using iterating over hisrogram using a stak that stores indexes. cuu element
+    // will compare to stack and see if next is smallest or not
+    // nse and pse using a simple traversal basically
+    public static int largestRectangleArea(int[] arr) {
+        Stack<Integer> stack = new Stack<>();
+        int max = 0;
+        int n = arr.length;
+
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && arr[i] < arr[stack.peek()]) {
+                int height = arr[stack.pop()];
+                int rightBoundary = i;
+                int leftBoundary = stack.isEmpty() ? -1 : stack.peek();
+                int width = rightBoundary - leftBoundary - 1;
+                max = Math.max(max, height * width);
+            }
+            stack.push(i);
+        }
+
+        // Final cleanup: process remaining bars in stack
+        while (!stack.isEmpty()) {
+            int height = arr[stack.pop()];
+            int rightBoundary = n;
+            int leftBoundary = stack.isEmpty() ? -1 : stack.peek();
+            int width = rightBoundary - leftBoundary - 1;
+            max = Math.max(max, height * width);
+        }
+
+        return max;
+    }
+
+    public static int[] replace_k(int[] arr, int k) {
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < arr.length; i++) {
+            while (!stack.isEmpty() && k > 0 && arr[i] <= stack.peek()) {
+                stack.pop();
+                k--;
+            }
+            stack.push(arr[i]);
+        }
+        // If still k > 0, remove from end
+        while (k > 0 && !stack.isEmpty()) {
+            stack.pop();
+            k--;
+        }
+        // If empty, return [0]
+        if (stack.isEmpty()) {
+            return new int[] { 0 };
+        }
+        // Convert stack to array (in order)
+        int[] result = new int[stack.size()];
+        for (int i = stack.size() - 1; i >= 0; i--) {
+            result[i] = stack.pop();
+        }
+        return result;
+    }
+
+    // solving the famous sliding window problem usinga dequeue
+    public static ArrayList<Integer> sliding_window(int[] arr, int k) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        Deque<Integer> q = new ArrayDeque<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            if (!q.isEmpty() && q.peek() <= i - k) {
+                q.removeFirst();
+            }
+            while (!q.isEmpty() && q.peekLast() < arr[i]) {
+                q.pop();
+            }
+            q.addLast(i);
+            if (i >= k - 1) {
+                ans.add(arr[q.getFirst()]);
+            }
+        }
+        return ans;
+    }
+
+    // Function to find celebrity, returns celebrity index or -1 if no celebrity
+    public static int findCelebrity(int[][] M, int n) {
+        int candidate = 0;
+        //find the potential celebrity
+        for (int i = 1; i < n; i++) {
+            if (M[candidate][i] == 1) {
+                candidate = i; //candidate knows i, so candidate can't be celebrity
+            }
+        }
+        //verify if candidate is actually a celebrity
+        for (int i = 0; i < n; i++) {
+            if (i != candidate) {
+                // candidate should not know anyone,and everyone should know candidate
+                if (M[candidate][i] == 1 || M[i][candidate] == 0) {
+                    return -1;
+                }
+            }
+        }
+        return candidate;
+    }
+
+ 
 
     public static void main(String[] args) {
     }

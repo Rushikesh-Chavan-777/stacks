@@ -143,7 +143,7 @@ public class master1 {
             while (!stack.isEmpty() && stack.peek() >= arr[i])
                 stack.pop();
 
-            if (stack.isEmpty())
+            if (stack.isEmpty())    //checks from here onwards
                 ans[i] = -1;
             else
                 ans[i] = stack.peek();
